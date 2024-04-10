@@ -1,0 +1,20 @@
+- name: Kafka Event Listener
+  hosts: localhost
+  execution_strategy: parallel
+  sources:
+    - bgptelecom.events.kafka_enhansed:
+        host: "172.23.3.25"
+        port: 30576
+        topic: my-topic
+        check_hostname: false
+
+  rules:
+    - name: Print Rule
+      condition:
+        all:
+          - events.webhook << event.webhook.payload.url == "http://www.example.com"
+          - events.kafka << event.kafka.message.channel == "red"
+      action:
+        print_event:
+          pretty: true
+          var_root: i
