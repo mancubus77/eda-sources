@@ -2,7 +2,7 @@
   hosts: localhost
   execution_strategy: parallel
   sources:
-    - bgptelecom.events.amq:
+    - mancubus77.events.amq:
         host: "172.23.3.25"
         port: "31016"
         channel: "hello"
