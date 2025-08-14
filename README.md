@@ -170,9 +170,19 @@ ansible-galaxy collection install mancubus77.events
 - Event Driven Ansible (EDA) Server
 - Access to AMQP/Kafka message brokers
 
+### Decision Environment
+This collection is designed to work with a custom Decision Environment that includes all necessary dependencies:
+
+**Container Image:** `quay.io/mancubus77/de:latest`
+
+This Decision Environment contains:
+- Event Driven Ansible runtime
+- Pre-installed Python dependencies (`aio-pika`, `aiokafka`)
+- Optimized configuration for AMQP and Kafka event processing
+
 ## Running Rulebooks
 
-### Using ansible-rulebook
+### Using ansible-rulebook (Local Installation)
 ```bash
 # Run AMQP rulebook
 ansible-rulebook --rulebook extensions/eda/rulebooks/rb.amqp.yaml -i inventory.yml
@@ -181,43 +191,18 @@ ansible-rulebook --rulebook extensions/eda/rulebooks/rb.amqp.yaml -i inventory.y
 ansible-rulebook --rulebook extensions/eda/rulebooks/rb.kafka.yaml -i inventory.yml
 ```
 
-### Using ansible-navigator
+### Using ansible-rulebook with Decision Environment (Recommended)
 ```bash
-# With the provided configuration
-ansible-navigator run extensions/eda/rulebooks/rb.kafka.yaml
+# Run Kafka rulebook with podman using the Decision Environment
+podman run -it --rm \
+  -v "$(pwd)":/tmp/project:Z \
+  quay.io/mancubus77/de:latest \
+  ansible-rulebook --rulebook /tmp/project/extensions/eda/rulebooks/rb.kafka.yaml -i /tmp/project/inventory.yml
+
+# Run AMQP rulebook
+podman run -it --rm \
+  -v "$(pwd)":/tmp/project:Z \
+  quay.io/mancubus77/de:latest \
+  ansible-rulebook --rulebook /tmp/project/extensions/eda/rulebooks/rb.amqp.yaml -i /tmp/project/inventory.yml
 ```
 
-## Development
-
-### Setting up Development Environment
-1. Clone the repository
-2. Install Python dependencies:
-   ```bash
-   pip install aio-pika aiokafka
-   ```
-3. Use the provided `ansible-navigator.yaml` for containerized development
-
-### Testing
-Test your event sources by running the rulebooks against real AMQP/Kafka brokers or using containerized versions:
-
-```bash
-# Example with Docker Compose for local testing
-docker-compose up -d rabbitmq kafka
-ansible-rulebook --rulebook extensions/eda/rulebooks/rb.amqp.yaml -i inventory.yml
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test with real message brokers
-5. Submit a pull request
-
-## License
-
-GPL-2.0-or-later
-
-## Support
-
-For issues and questions, please use the [GitHub Issues](https://github.com/mancubus77/eda-sources/issues) tracker.
