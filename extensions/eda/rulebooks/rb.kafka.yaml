@@ -3,8 +3,8 @@
   execution_strategy: parallel
   sources:
     - mancubus77.events.kafka_enhanced:
-        host: "172.23.3.25"
-        port: 30576
+        host: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local"
+        port: 9092
         topic: my-topic
         check_hostname: false
 
